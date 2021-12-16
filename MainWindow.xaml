@@ -1,0 +1,242 @@
+﻿<Window x:Class="Maze.MazeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"        
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:b="clr-namespace:Maze.Behavior"
+        xmlns:t="clr-namespace:Maze.TemplateSelector"
+        xmlns:c="clr-namespace:Maze.Converters"        
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+
+    <Window.Resources>
+        <!--<DataTemplate x:Key="Start" DataType="CellViewModel">
+            <Border>
+                <TextBlock Text="{Binding}" 
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontWeight="ExtraBold"/>
+            </Border>
+        </DataTemplate>
+
+        <DataTemplate x:Key="Finish" DataType="CellViewModel">
+            <Border>
+                <TextBlock Text="{Binding}" 
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontWeight="ExtraBold"/>
+            </Border>
+        </DataTemplate>-->
+
+
+        <c:FilePathToVisibilityConverter x:Key="FilePathToVisibilityConverter" />
+        
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
+        <DataTemplate x:Key="Wall" DataType="CellViewModel">
+            <Border>
+                <TextBlock Text="{Binding}"
+                           IsEnabled="False"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+            </Border>
+        </DataTemplate>
+
+        
+
+        <DataTemplate x:Key="Empty" DataType="CellViewModel">
+            <Border BorderBrush="Blue" 
+                    BorderThickness=".5"
+                    Name="border">
+                <TextBlock Text="{Binding}"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Center"
+                         FontWeight="ExtraBold"/>
+            </Border>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                    <Setter Property="BorderBrush" TargetName="border" Value="OrangeRed"/>
+                    <Setter Property="BorderThickness" TargetName="border" Value="2"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>        
+        </DataTemplate>
+
+        <t:CellTemplateSelector x:Key="CellTemplateSelector" 
+                                Start="{StaticResource ResourceKey=Empty}"
+                                Finish="{StaticResource ResourceKey=Empty}"
+                                Wall="{StaticResource ResourceKey=Wall}"
+                                Empty="{StaticResource ResourceKey=Empty}" />
+
+        <ContentControl x:Key="Cell" 
+                        x:Shared="false"                        
+                        ContentTemplateSelector="{StaticResource CellTemplateSelector}">
+            <i:Interaction.Behaviors>
+                <b:ContentControlBehavior IsSelected="{Binding IsSelected}"
+                                          Direction="{Binding Direction, Mode=TwoWay}"
+                                          IsFinished="{Binding IsFinished}"/>
+            </i:Interaction.Behaviors>
+        </ContentControl>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" 
+              Margin="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition  Width="150" />
+            </Grid.ColumnDefinitions>
+            
+            <TextBox Text="{Binding FilePath}" 
+                     Margin="10"
+                     VerticalContentAlignment="Center"                     
+                     IsEnabled="False"
+                     Height="30"
+                     Grid.Column="0" />
+            <Button Grid.Column="1" 
+                    Margin="0,10,10,10"
+                    Height="30"
+                    Content="Load Maze(.csv) file)">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click" >
+                        <i:CallMethodAction TargetObject="{Binding}" MethodName="LoadMazeData"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Button>
+        </Grid>
+        <Grid Grid.Row="1"
+              Visibility="{Binding FilePath, Converter={StaticResource FilePathToVisibilityConverter}}"
+              Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="300"/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Top">
+                <i:Interaction.Behaviors>
+                    <b:CreateMazeBehavior Maze="{Binding Maze, Mode=TwoWay}" />
+                </i:Interaction.Behaviors>
+            </Grid>
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="80"/>
+                    <RowDefinition/>                    
+                </Grid.RowDefinitions>
+                <GroupBox Header="Cell Info"
+                          Grid.Row="0"
+                          Margin="2">
+                    <Grid Margin="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Margin="2" 
+                                    Grid.Column="0">
+                            <TextBlock Text="{Binding Walls}"
+                                       Margin="2"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Center" />
+                            
+                            <TextBlock Text="{Binding ValidCells}" 
+                                       HorizontalAlignment="Left"
+                                       Margin="2"
+                                       VerticalAlignment="Center" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1"
+                                    Margin="2">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Row(>0)"
+                                           Width="70"/>
+                                <TextBox Text="{Binding Row, UpdateSourceTrigger=PropertyChanged}"
+                                         Margin="2"
+                                         Width="40"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" >
+                                <TextBlock Text="Column(>0)" Width="70"/>
+                                <TextBox Text="{Binding Column, UpdateSourceTrigger=PropertyChanged}"
+                                         Margin="2"
+                                         Width="40"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                            </StackPanel>                            
+                        </StackPanel>
+
+                        <TextBlock Margin="2" 
+                                   Grid.Column="2" 
+                                   Text="{Binding CellInfo}"
+                                   FontWeight="ExtraBlack"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+                    </Grid>
+                </GroupBox>
+
+                <GroupBox Header="Solve Maze" Grid.Row="1">
+                    <Grid Margin="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition  Height="Auto"/>
+                            <RowDefinition  Height="Auto"/>
+                            <RowDefinition  Height="*"/>
+                        </Grid.RowDefinitions>
+                    <StackPanel Margin="2" Orientation="Horizontal" 
+                                Grid.Row="0">
+                        <RadioButton Content="Manual" 
+                                     Width="100"
+                                     IsChecked="{Binding Manual}"
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Center"/>
+                        <RadioButton Content="Automatic" 
+                                     Width="100"
+                                     IsChecked="{Binding Automatic}"
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Center"/>
+                            <Button Content="Start" 
+                                Width="80" 
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Click" >
+                                        <i:CallMethodAction TargetObject="{Binding}" MethodName="SolveMaze"/>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Button>
+                        </StackPanel>
+
+                    <TextBlock Text="Maze Solved"
+                                   Grid.Row="1"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Margin="5"
+                                   FontSize="15"
+                                   FontWeight="Bold"
+                                   Foreground="Red"
+                                   Visibility="{Binding IsFinished, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                    <ListBox ItemsSource="{Binding MazeRun}"
+                             Grid.Row="2"
+                             SelectedItem="{Binding SelectedCell}"
+                             HorizontalAlignment="Stretch"
+                             VerticalAlignment="Stretch">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Path}" />
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                            <i:Interaction.Behaviors>
+                                <b:ListBoxBehavior UpdateMazePath="{Binding MazePath}" />
+                            </i:Interaction.Behaviors>
+                        </ListBox>
+                    </Grid>
+                </GroupBox>               
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
