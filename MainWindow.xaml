@@ -29,11 +29,8 @@
             </Border>
         </DataTemplate>-->
 
-
-        <c:FilePathToVisibilityConverter x:Key="FilePathToVisibilityConverter" />
-        
+        <c:FilePathToVisibilityConverter x:Key="FilePathToVisibilityConverter" />        
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-
         <DataTemplate x:Key="Wall" DataType="CellViewModel">
             <Border>
                 <TextBlock Text="{Binding}"
