@@ -8,11 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="InputFiles\ExampleMaze.csv" />
+    <None Remove="InputFiles\Maze.csv" />
+    <None Remove="InputFiles\NoPathMaze.csv" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="InputFiles\ExampleMaze.csv">
+    <Content Include="InputFiles\NoPathMaze.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="InputFiles\Maze.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

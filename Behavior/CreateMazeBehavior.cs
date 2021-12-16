@@ -34,6 +34,10 @@ namespace Maze.Behavior
             if (behavior.AssociatedObject is not Grid grid)
                 return;
 
+            grid.Children.Clear();
+            grid.RowDefinitions.Clear();
+            grid.ColumnDefinitions.Clear();
+
             var rows = behavior.Maze.Count;
             var columns = behavior.Maze.Select(x => x.Count).Max();
 

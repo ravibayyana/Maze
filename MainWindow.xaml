@@ -11,24 +11,7 @@
         Title="MainWindow" Height="450" Width="800">
 
     <Window.Resources>
-        <!--<DataTemplate x:Key="Start" DataType="CellViewModel">
-            <Border>
-                <TextBlock Text="{Binding}" 
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           FontWeight="ExtraBold"/>
-            </Border>
-        </DataTemplate>
-
-        <DataTemplate x:Key="Finish" DataType="CellViewModel">
-            <Border>
-                <TextBlock Text="{Binding}" 
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           FontWeight="ExtraBold"/>
-            </Border>
-        </DataTemplate>-->
-
+        
         <c:FilePathToVisibilityConverter x:Key="FilePathToVisibilityConverter" />        
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <DataTemplate x:Key="Wall" DataType="CellViewModel">
@@ -207,7 +190,7 @@
                             </Button>
                         </StackPanel>
 
-                    <TextBlock Text="Maze Solved"
+                        <TextBlock Text="{Binding Message}"
                                    Grid.Row="1"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"

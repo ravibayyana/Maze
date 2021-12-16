@@ -83,7 +83,10 @@ namespace Maze.ViewModels
                     SelectedCell = cellVm;
                     OnPropertyChanged(nameof(MazePath));
                     if (cellVm.CellType == CellType.Finish)
+                    {
                         IsFinished = true;
+                        this.Message = "Maze Solved";
+                    }
 
                     return;
                 }
@@ -246,7 +249,7 @@ namespace Maze.ViewModels
         private void SolveManually()
         {
             SelectedCell = StartCell;
-            MazeRun.Add(StartCell);            
+            MazeRun.Add(StartCell);
             OnPropertyChanged(nameof(MazePath));
         }
 
@@ -255,19 +258,32 @@ namespace Maze.ViewModels
             var output = new List<List<CellViewModel>>();
             SolveMaze(StartCell, FinishCell, new List<CellViewModel>(), new List<CellViewModel>(), output);
             MazeRun.Clear();
-            if(output.Count > 0)
+            this.Message = "Cant Find Path";
+            if (output.Count > 0)
             {
                 output.ElementAt(0).ForEach(MazeRun.Add);
+                this.Message = "Maze Solved";
             }
-            this.IsFinished = true;
+            this.IsFinished = true;            
+        }
+
+        public string Message 
+        { 
+            get => message;
+            set
+            {
+                message = value;
+                OnPropertyChanged(nameof(Message));
+            }
         }
 
         List<int> xMoves = new List<int> { 0, 0, 1, -1 };
         List<int> yMoves = new List<int> { -1, 1, 0, 0 };
+        private string message;
 
-        private void SolveMaze(CellViewModel start, CellViewModel end, 
-            List<CellViewModel> visited, 
-            List<CellViewModel> tempOutput,  
+        private void SolveMaze(CellViewModel start, CellViewModel end,
+            List<CellViewModel> visited,
+            List<CellViewModel> tempOutput,
             List<List<CellViewModel>> output)
         {
             if (visited.Any(v => v.Row == start.Row && v.Column == start.Column))
@@ -276,7 +292,7 @@ namespace Maze.ViewModels
             visited.Add(start);
             if (tempOutput.Count == 0)
                 tempOutput.Add(start);
-            
+
             for (int i = 0; i < xMoves.Count; i++)
             {
                 var x = xMoves[i] + start.Row;
@@ -291,7 +307,7 @@ namespace Maze.ViewModels
                     if (visited.Any(v => v.Row == cell.Row && v.Column == cell.Column))
                         continue;
 
-                        tempOutput.Add(cell);
+                    tempOutput.Add(cell);
                     if (cell.CellType == CellType.Finish)
                     {
                         output.Add(tempOutput);
@@ -303,8 +319,25 @@ namespace Maze.ViewModels
             }
         }
 
+        private void Reset()
+        {
+            this.Row = string.Empty;
+            this.Column = string.Empty;
+            this.Maze?.Clear();
+            this.MazeRun.Clear();
+            this.Manual = true;
+            this.Automatic = false;
+            this.TotalCells = 0;
+            this.TotalWalls = 0;
+            this.IsFinished = false;
+            this.Message = string.Empty;
+        }
+
         private void CreateMaze()
         {
+
+            this.Reset();
+
             var rows = File.ReadAllLines(FilePath);
             int rowCount = rows.Length;
 
