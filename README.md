@@ -2,7 +2,8 @@
 
 # GUI functionality
 
-- Will read a .csv file and creates a maze. Example .csv is added to the project.
+- Will read a .csv file and creates a maze. 
+- Maze.csv and NopathMaze.csv are added to the project.
 - A gif is attached on how to use the project. All keys used are displayed in the bottom of the gif.
 
 User Story 1
